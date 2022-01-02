@@ -1,7 +1,7 @@
 package sovell
 
 import (
-	"github.com/enablefzm/gotools"
+	"github.com/enablefzm/gotools/vatools"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -34,5 +34,5 @@ func GetOrders() (ResOrderInfo, error) {
 func GetSign(kv []string) string {
 	kv = append(kv, key)
 	strJoin := strings.Join(kv, "")
-	return gotools.MD5(strJoin)
+	return vatools.MD5(strJoin)
 }

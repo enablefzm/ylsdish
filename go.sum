@@ -1,3 +1,7 @@
+github.com/enablefzm/gotools/vaini v0.0.0-20220102123415-121a3cc17803 h1:KzAJ96tlahH1PetAa+Pxmozohd1cM6zh0xjaVcYq0AU=
+github.com/enablefzm/gotools/vaini v0.0.0-20220102123415-121a3cc17803/go.mod h1:DHuojjhmkOebs7JWrQYMpOsU6pCHbXyatL7ksqjdaBc=
+github.com/enablefzm/gotools/vatools v0.0.0-20220102123415-121a3cc17803 h1:43ztoW41kqPzCJANsMtlTSOmJtMMbLL07mmKh4XarPA=
+github.com/enablefzm/gotools/vatools v0.0.0-20220102123415-121a3cc17803/go.mod h1:8H/C3WJHb4CjG+7GIcJPzcCUtH1v8AmAJcGRYlt1ZWQ=
 github.com/go-sql-driver/mysql v1.6.0 h1:BCTh4TKNUYmOmMUcQ3IipzF5prigylS7XXjEkfCHuOE=
 github.com/go-sql-driver/mysql v1.6.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
