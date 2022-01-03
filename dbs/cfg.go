@@ -22,17 +22,18 @@ type YlsDishCfg struct {
 
 func NewYlsDishCfg() *YlsDishCfg {
 	cfg := &YlsDishCfg{
-		User:            "billManage",
-		Pass:            "BillManage&2021",
-		Address:         "134.175.246.140",
-		Port:            "3316",
-		DbName:          "billManage",
+		User:            "root",
+		Pass:            "Health2021*",
+		Address:         "123.139.116.237",
+		Port:            "3306",
+		DbName:          "platform_pub",
 		MaxConn:         10,
 		MinConn:         1,
 		DishServer:      "http://127.0.0.1:19001",
 		OrdersPath:      "/xdf_jhnoa/orders",
 		OrderDetailPath: "/xdf_jhnoa/orders",
 	}
+
 	// 加载文件并解析
 	path, err := vatools.GetNowPath()
 	if err == nil {
@@ -46,6 +47,34 @@ func NewYlsDishCfg() *YlsDishCfg {
 					cfg.Pass = v
 				case "address":
 					cfg.Address = v
+				case "port":
+					cfg.Port = v
+				case "dbname":
+					cfg.DbName = v
+				case "maxconn":
+					maxConn := vatools.SInt(v)
+					if maxConn < 1 {
+						maxConn = 1
+					}
+					cfg.MaxConn = vatools.SInt(v)
+				case "minconn":
+					minConn := vatools.SInt(v)
+					if minConn < 1 {
+						minConn = 1
+					}
+					cfg.MinConn = minConn
+				}
+			}
+		}
+		if mp, ok := c.GetNode("dish"); ok {
+			for k, v := range mp {
+				switch k {
+				case "server":
+					cfg.DishServer = v
+				case "order_path":
+					cfg.OrdersPath = v
+				case "order_detail_path":
+					cfg.OrderDetailPath = v
 				}
 			}
 		}
