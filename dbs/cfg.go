@@ -18,6 +18,11 @@ type YlsDishCfg struct {
 	DishServer      string
 	OrdersPath      string
 	OrderDetailPath string
+	DishKey         string
+	DishShop        int
+	DishTerm        int
+	DishOper        string
+	DishPageSize    int
 }
 
 func NewYlsDishCfg() *YlsDishCfg {
@@ -29,9 +34,14 @@ func NewYlsDishCfg() *YlsDishCfg {
 		DbName:          "platform_pub",
 		MaxConn:         10,
 		MinConn:         1,
-		DishServer:      "http://127.0.0.1:19001",
+		DishServer:      "http://27.154.237.130:12510",
 		OrdersPath:      "/xdf_jhnoa/orders",
 		OrderDetailPath: "/xdf_jhnoa/orders",
+		DishKey:         "b699e89068304252b0fcea2a001b8eff",
+		DishShop:        101,
+		DishTerm:        103,
+		DishOper:        "yls",
+		DishPageSize:    40,
 	}
 
 	// 加载文件并解析
@@ -75,6 +85,22 @@ func NewYlsDishCfg() *YlsDishCfg {
 					cfg.OrdersPath = v
 				case "order_detail_path":
 					cfg.OrderDetailPath = v
+				case "dish_key":
+					cfg.DishKey = v
+				case "dish_shop":
+					cfg.DishShop = vatools.SInt(v)
+				case "dish_term":
+					cfg.DishTerm = vatools.SInt(v)
+				case "dish_oper":
+					cfg.DishOper = v
+				case "dish_page_size":
+					cfg.DishPageSize = vatools.SInt(v)
+					if cfg.DishPageSize < 1 {
+						cfg.DishPageSize = 1
+					}
+					if cfg.DishPageSize > 100 {
+						cfg.DishPageSize = 100
+					}
 				}
 			}
 		}

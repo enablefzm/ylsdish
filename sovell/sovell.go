@@ -1,38 +1,81 @@
 package sovell
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/enablefzm/gotools/vatools"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sort"
 	"strings"
+	"time"
+	"ylsdish/dbs"
 )
 
-const key string = "aabbccddeeffgg"
-
 // 获取智能餐盘的业务列表
-func GetOrders() (ResOrderInfo, error) {
+func GetOrders(obReq *ReqOrders) (ResOrderInfo, error) {
 	obRes := NewResOrderInfo()
 	// 生成请求的URL
-	url := "http://xxxx:19001/xdf_jhnoa/orders"
-	res, err := http.Post(url, "application/x-www-form-urlencoded", strings.NewReader("xxx=aaa"))
+	url := dbs.Cfg.DishServer + dbs.Cfg.OrdersPath
+	bts, err := PostUrl(url, obReq)
 	if err != nil {
-		log.Println("请求订单列表发生错误:", err.Error())
 		return obRes, err
 	}
+	fmt.Println(string(bts))
+	return obRes, nil
+}
+
+// 获取智能餐盘流水号详细数据信息
+func GetOrderDetail(obReq *ReqOrderDetail) (ResOrderDetail, error) {
+	obRes := NewResOrderDetail()
+	// 生成请求的URL
+	url := dbs.Cfg.DishServer + dbs.Cfg.OrderDetailPath
+	bts, err := PostUrl(url, obReq)
+	if err != nil {
+		return obRes, err
+	}
+	// fmt.Println(strJson)
+	json.Unmarshal(bts, &obRes)
+	return obRes, nil
+}
+
+func PostUrlStr(url string, req IReq) (string, error) {
+	bts, err := PostUrl(url, req)
+	if err != nil {
+		return "", err
+	}
+	return string(bts), err
+}
+
+func PostUrl(url string, req IReq) ([]byte, error) {
+	res, err := http.Post(url, "application/x-www-form-urlencoded", strings.NewReader(req.GetPost()))
+	if err != nil {
+		log.Println("访问", url, "服务器发生错误:", err.Error())
+		return nil, err
+	}
 	defer res.Body.Close()
-	// 读取内容
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return obRes, nil
+		return nil, err
 	}
-	log.Println(string(body))
-	return obRes, nil
+	return body, nil
 }
 
 // 获取签名
 func GetSign(kv []string) string {
-	kv = append(kv, key)
+	sort.Strings(kv)
+	kv = append(kv, dbs.Cfg.DishKey)
 	strJoin := strings.Join(kv, "")
 	return vatools.MD5(strJoin)
+}
+
+// 通过字符串获取时间对象
+func GetTimeOnStr(strTime string) time.Time {
+	t, err := time.ParseInLocation(vatools.TIME_FORMAT, strTime, time.Local)
+	if err != nil {
+		fmt.Println(err.Error())
+		return time.Now()
+	}
+	return t
 }
