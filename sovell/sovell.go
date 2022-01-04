@@ -3,7 +3,6 @@ package sovell
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/enablefzm/gotools/vatools"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,7 +10,17 @@ import (
 	"strings"
 	"time"
 	"ylsdish/dbs"
+
+	"github.com/enablefzm/gotools/vatools"
 )
+
+// 工作处理
+func WorkOrders() error {
+	// 获取最后时间
+	obDb := dbs.NewMyDB()
+	fmt.Println(obDb.GetLastTime().String())
+	return nil
+}
 
 // 获取智能餐盘的业务列表
 func GetOrders(obReq *ReqOrders) (ResOrderInfo, error) {
@@ -22,7 +31,7 @@ func GetOrders(obReq *ReqOrders) (ResOrderInfo, error) {
 	if err != nil {
 		return obRes, err
 	}
-	fmt.Println(string(bts))
+	json.Unmarshal(bts, &obRes)
 	return obRes, nil
 }
 
@@ -35,7 +44,6 @@ func GetOrderDetail(obReq *ReqOrderDetail) (ResOrderDetail, error) {
 	if err != nil {
 		return obRes, err
 	}
-	// fmt.Println(strJson)
 	json.Unmarshal(bts, &obRes)
 	return obRes, nil
 }
@@ -59,6 +67,7 @@ func PostUrl(url string, req IReq) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(string(body))
 	return body, nil
 }
 
