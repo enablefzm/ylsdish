@@ -17,9 +17,11 @@ type ResOrderDetailOrderInfo struct {
 	CreateDate string `json:"create_date"`
 	Type       string `json:"type"`
 	AmtDues    string `json:"amt_dues"`
+	Amt        string `json:"amt"`
 	Qty        string `json:"qty"`
 	Part       string `json:"part"`
 	CardNo     string `json:"cardno"`
+	Cid        string `json:"cid"`
 	ShopName   string `json:"shopname"`
 	TermName   string `json:"termname"`
 }

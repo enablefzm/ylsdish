@@ -14,20 +14,12 @@ import (
 	"github.com/enablefzm/gotools/vatools"
 )
 
-// 工作处理
-func WorkOrders() error {
-	// 获取最后时间
-	obDb := dbs.NewMyDB()
-	fmt.Println(obDb.GetLastTime().String())
-	return nil
-}
-
 // 获取智能餐盘的业务列表
 func GetOrders(obReq *ReqOrders) (ResOrderInfo, error) {
 	obRes := NewResOrderInfo()
 	// 生成请求的URL
 	url := dbs.Cfg.DishServer + dbs.Cfg.OrdersPath
-	bts, err := PostUrl(url, obReq)
+	bts, err := TryPostUrl(url, obReq)
 	if err != nil {
 		return obRes, err
 	}
@@ -40,7 +32,7 @@ func GetOrderDetail(obReq *ReqOrderDetail) (ResOrderDetail, error) {
 	obRes := NewResOrderDetail()
 	// 生成请求的URL
 	url := dbs.Cfg.DishServer + dbs.Cfg.OrderDetailPath
-	bts, err := PostUrl(url, obReq)
+	bts, err := TryPostUrl(url, obReq)
 	if err != nil {
 		return obRes, err
 	}
@@ -48,18 +40,27 @@ func GetOrderDetail(obReq *ReqOrderDetail) (ResOrderDetail, error) {
 	return obRes, nil
 }
 
-func PostUrlStr(url string, req IReq) (string, error) {
-	bts, err := PostUrl(url, req)
-	if err != nil {
-		return "", err
+// 可以尝试3次错误的请求
+func TryPostUrl(url string, req IReq) ([]byte, error) {
+	var btVal []byte
+	var err error
+	for i := 0; i < 3; i++ {
+		btVal, err = PostUrl(url, req)
+		if err == nil {
+			break
+		}
+		log.Println("访问服务器", url, "发生错误:", err.Error())
+		if i < 3 {
+			log.Println("等待5秒后重试...")
+			time.Sleep(time.Second * 5)
+		}
 	}
-	return string(bts), err
+	return btVal, err
 }
 
 func PostUrl(url string, req IReq) ([]byte, error) {
 	res, err := http.Post(url, "application/x-www-form-urlencoded", strings.NewReader(req.GetPost()))
 	if err != nil {
-		log.Println("访问", url, "服务器发生错误:", err.Error())
 		return nil, err
 	}
 	defer res.Body.Close()
@@ -67,7 +68,6 @@ func PostUrl(url string, req IReq) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
 	return body, nil
 }
 

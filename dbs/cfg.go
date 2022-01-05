@@ -23,13 +23,15 @@ type YlsDishCfg struct {
 	DishTerm        int
 	DishOper        string
 	DishPageSize    int
+	DishWaitTime    int
+	DishOperateID   string
 }
 
 func NewYlsDishCfg() *YlsDishCfg {
 	cfg := &YlsDishCfg{
-		User:            "root",
+		User:            "ruanbl",
 		Pass:            "Health2021*",
-		Address:         "123.139.116.237",
+		Address:         "192.168.100.70",
 		Port:            "3306",
 		DbName:          "platform_pub",
 		MaxConn:         10,
@@ -42,6 +44,8 @@ func NewYlsDishCfg() *YlsDishCfg {
 		DishTerm:        103,
 		DishOper:        "yls",
 		DishPageSize:    40,
+		DishWaitTime:    30,
+		DishOperateID:   "39fe5118-48ac-7850-8ed0-ebc6949ae983",
 	}
 
 	// 加载文件并解析
@@ -101,6 +105,13 @@ func NewYlsDishCfg() *YlsDishCfg {
 					if cfg.DishPageSize > 100 {
 						cfg.DishPageSize = 100
 					}
+				case "dish_wait_time":
+					cfg.DishWaitTime = vatools.SInt(v)
+					if cfg.DishWaitTime < 1 {
+						cfg.DishWaitTime = 1
+					}
+				case "dish_operate_id":
+					cfg.DishOperateID = v
 				}
 			}
 		}

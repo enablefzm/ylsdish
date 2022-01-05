@@ -5,5 +5,5 @@ import (
 )
 
 func TestWorkOrders(t *testing.T) {
-	t.Log(WorkOrders())
+
 }

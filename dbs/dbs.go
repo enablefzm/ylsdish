@@ -2,13 +2,18 @@ package dbs
 
 import (
 	"fmt"
-	"time"
-
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 var ObDB *gorm.DB
+
+func init() {
+	err := LinkDb()
+	if err != nil {
+		panic("连接服务器发生误:" + err.Error())
+	}
+}
 
 func LinkDb() error {
 	var err error
@@ -20,13 +25,10 @@ func LinkDb() error {
 		Cfg.Port,
 		Cfg.DbName)
 	ObDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	sqlDb, err1 := ObDB.DB()
+	if err1 == nil {
+		sqlDb.SetMaxIdleConns(Cfg.MinConn)
+		sqlDb.SetMaxOpenConns(Cfg.MaxConn)
+	}
 	return err
-}
-
-// 获取最后同步的时间
-func GetLastTime() time.Time {
-	// 读取本地保存的数据
-	// t, err := time.ParseInLocation(vatools.TIME_FORMAT, )
-	mydb := NewMyDB()
-	return mydb.GetLastTime()
 }

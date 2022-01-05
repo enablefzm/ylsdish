@@ -26,12 +26,21 @@ func (mydb *MyDB) GetLastTime() time.Time {
 	if len(mydb.LastTime) < 8 {
 		mydb.LastTime = "2021-10-10 00:00:00"
 	}
-	t, _ := time.ParseInLocation(vatools.TIME_FORMAT, "2021-10-10 00:00:00", time.Local)
+	t, _ := time.ParseInLocation(vatools.TIME_FORMAT, mydb.LastTime, time.Local)
 	return t
+}
+
+func (mydb *MyDB) SetLastTime(dt time.Time) {
+	mydb.LastTime = dt.Format(vatools.TIME_FORMAT)
 }
 
 func (mydb *MyDB) Save() error {
 	strJson, err := vatools.Json(mydb)
 	vatools.WriteFileLR(FILE_MYDB_PATH, strJson)
 	return err
+}
+
+func (mydb *MyDB) SetLastTimeSave(dt time.Time) {
+	mydb.SetLastTime(dt)
+	mydb.Save()
 }
