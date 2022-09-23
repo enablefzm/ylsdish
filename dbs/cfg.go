@@ -25,6 +25,7 @@ type YlsDishCfg struct {
 	DishPageSize    int
 	DishWaitTime    int
 	DishOperateID   string
+	HttpServerPort  string
 }
 
 func NewYlsDishCfg() *YlsDishCfg {
@@ -44,8 +45,9 @@ func NewYlsDishCfg() *YlsDishCfg {
 		DishTerm:        103,
 		DishOper:        "yls",
 		DishPageSize:    40,
-		DishWaitTime:    30,
+		DishWaitTime:    10,
 		DishOperateID:   "39fe5118-48ac-7850-8ed0-ebc6949ae983",
+		HttpServerPort:  "8090",
 	}
 
 	// 加载文件并解析
@@ -77,6 +79,8 @@ func NewYlsDishCfg() *YlsDishCfg {
 						minConn = 1
 					}
 					cfg.MinConn = minConn
+				case "http_server_port":
+					cfg.HttpServerPort = v
 				}
 			}
 		}

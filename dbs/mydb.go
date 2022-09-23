@@ -23,10 +23,17 @@ func NewMyDB() *MyDB {
 }
 
 func (mydb *MyDB) GetLastTime() time.Time {
-	if len(mydb.LastTime) < 8 {
-		mydb.LastTime = "2021-10-10 00:00:00"
+	/*
+		if len(mydb.LastTime) < 8 {
+			mydb.LastTime = "2021-01-01 00:00:00"
+		}
+		t, _ := time.ParseInLocation(vatools.TIME_FORMAT, mydb.LastTime, time.Local)
+
+	*/
+	t := vatools.STime(mydb.LastTime).Add(-1 * time.Second)
+	if t.Year() < 2021 {
+		t = vatools.STime("2021-01-01 00:00:00")
 	}
-	t, _ := time.ParseInLocation(vatools.TIME_FORMAT, mydb.LastTime, time.Local)
 	return t
 }
 

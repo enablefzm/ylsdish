@@ -9,16 +9,18 @@ import (
 var ObDB *gorm.DB
 
 func init() {
-	err := LinkDb()
-	if err != nil {
-		panic("连接服务器发生误:" + err.Error())
-	}
+	/*
+		err := LinkDb()
+		if err != nil {
+			panic("连接服务器发生误:" + err.Error())
+		}
+	*/
 }
 
 func LinkDb() error {
 	var err error
 	// dsn := "billManage:BillManage&2021@tcp(134.175.246.140:3316)/billManage?charset=utf8mb4&parseTime=True"
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
 		Cfg.User,
 		Cfg.Pass,
 		Cfg.Address,

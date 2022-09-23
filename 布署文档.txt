@@ -1,0 +1,14 @@
+一、运行慈爱与智盘餐厅消费的步骤
+    1、将 ylsdish 运行文件复制到运行服务器上
+    2、提升 ylsdish 权限 (只有在新复制文件时才需要提升文件权限)
+        chmod 777 ylsdish
+    3、使用nohup模式运行 ylsdish 并将日志按月份分割存储到 logs 目录
+        nohup ./ylsdish &
+
+二、停止运行
+    1、获取 ylsdish 的运行的进程ID
+        ps aux | grep ylsdish
+        命令返回的消息如下
+            root     30266  0.0  0.1 710472  5424 ?        Sl   14:46   0:00 ./ylsdish
+    2、使用kill 命令强制退出
+        kill 30266

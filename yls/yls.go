@@ -5,6 +5,7 @@ import (
 	"github.com/enablefzm/gotools/vatools"
 	"gorm.io/gorm"
 	"log"
+	"sync"
 	"time"
 	"ylsdish/dbs"
 	"ylsdish/sovell"
@@ -16,14 +17,39 @@ var ICountSeqDetail int = 0 // 总共导入单据明细数量
 var ILoopCountSeq int = 0
 var ILoopCountSeqDetail int = 0
 
+var LkRunWorkSyncDish *sync.RWMutex = new(sync.RWMutex)
+var BlnRuningWorkSyncDish bool = false
+
+// 只有在工作时间中才会去同步
+func WorkSyncDishOnWorkTime() {
+	nowHouse := time.Now().Hour()
+	if nowHouse < 6 || nowHouse > 22 {
+		log.Println("不在工作时间，不需要执行同步工作！")
+		return
+	}
+	WorkSyncDish()
+}
+
 // 执行同步数据
 func WorkSyncDish() {
+	LkRunWorkSyncDish.Lock()
+	if BlnRuningWorkSyncDish {
+		log.Println("同步服务器正在执行中，同步工作退出!=======================>")
+		LkRunWorkSyncDish.Unlock()
+		return
+	}
+	BlnRuningWorkSyncDish = true
+	LkRunWorkSyncDish.Unlock()
+	defer func() {
+		BlnRuningWorkSyncDish = false
+	}()
 	ILoopCountSeq = 0
 	ILoopCountSeqDetail = 0
 	// 获取最后一次同步的时间
 	mydb := dbs.NewMyDB()
 	lastTime := mydb.GetLastTime()
-	lastTime = vatools.STime("2022-01-04 00:00:00")
+
+	// lastTime = vatools.STime("2022-01-04 00:00:00")
 	nowTime := time.Now()
 	// 获取服务端数据
 	var iPage int = 1
@@ -95,6 +121,8 @@ func WorkSyncDishDetail(seq string) {
 		var arrAppDishConfirm []ylsdb.Appdishconfirm = make([]ylsdb.Appdishconfirm, 0, 7)
 		// 获取餐段类型
 		iItemType := getMeal(obRes.Order.Part)
+		nowTime := time.Now()
+		confirmDate := vatools.STime(obRes.Order.CreateDate)
 		// 写入长者消费的餐食数据
 		for _, v := range obRes.Details {
 			// 获取美食数据ID
@@ -111,7 +139,8 @@ func WorkSyncDishDetail(seq string) {
 				ItemType:       iItemType,
 				OperateId:      dbs.Cfg.DishOperateID,
 				ConfirmOperate: "cg",
-				CreationTime:   time.Time{},
+				CreationTime:   nowTime,
+				ConfirmDate:    confirmDate,
 				Count:          1,
 				DishName:       pDishInfo.Name,
 			})

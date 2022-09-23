@@ -1,6 +1,7 @@
 package yls
 
 import (
+	"sync"
 	"testing"
 )
 
@@ -46,5 +47,15 @@ func TestYls(t *testing.T) {
 			fmt.Println(pMember.FullName)
 		}
 	*/
-	WorkSyncDish()
+
+	wg := new(sync.WaitGroup)
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			WorkSyncDish()
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+	// WorkSyncDish()
 }

@@ -10,6 +10,7 @@ type Appdishconfirm struct {
 	OperateId      string    `gorm:"column:OperateId"`      // 操作员ID
 	ConfirmOperate string    `gorm:"column:ConfirmOperate"` // 食物加工类型
 	CreationTime   time.Time `gorm:"column:CreationTime"`   // 创建时间
+	ConfirmDate    time.Time `gorm:"column:ConfirmDate"`    // 用餐时间
 	Count          int       `gorm:column:Count`            // 数量
 	DishName       string    `gorm:"column:DishName"`       // 食物名称
 }
