@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"github.com/enablefzm/gotools/vatools"
 	"log"
 	"net/http"
 	"time"
@@ -31,7 +29,6 @@ func main() {
 		for {
 
 			// 开始同步数据
-			// yls.WorkSyncDish()
 			// 只在工作时间内同步
 			yls.WorkSyncDishOnWorkTime()
 			log.Println("开始等待", dbs.Cfg.DishWaitTime, "分钟后再继续同步")
@@ -39,22 +36,9 @@ func main() {
 			time.Sleep(time.Minute * time.Duration(dbs.Cfg.DishWaitTime))
 		}
 	}()
-	// 建立Http服务
-	http.HandleFunc("/startsync", func(wr http.ResponseWriter, req *http.Request) {
-		go yls.WorkSyncDish()
-		wr.Write([]byte(vatools.GetNowTimeString() + " ====> 手动执行了同步操作！！"))
-	})
-	// 设定同步时间
-	http.HandleFunc("/setwaittime", func(wr http.ResponseWriter, req *http.Request) {
-		arg := req.URL.Query().Get("t")
-		waitTime := vatools.SInt(arg)
-		if waitTime < 1 {
-			waitTime = 1
-		}
-		dbs.Cfg.DishWaitTime = waitTime
-		log.Println("设定同步等待时间为：", dbs.Cfg.DishWaitTime, "分钟")
-		wr.Write([]byte(fmt.Sprint("设定当前同步等待时间为:", waitTime)))
-	})
+	// 运行路由
+	InitRouter()
+	// 启动服务
 	log.Println("运行HttpServer服务")
 	err = http.ListenAndServe(":"+dbs.Cfg.HttpServerPort, nil)
 	if err != nil {
